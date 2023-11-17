@@ -20,7 +20,7 @@
     
     
       
-        <title>Sigverify</title>
+        <title>Lambda-based Signature Verification</title>
       
     
     
@@ -128,7 +128,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Sigverify" class="md-header__button md-logo" aria-label="Sigverify" data-md-component="logo">
+    <a href="." title="Lambda-based Signature Verification" class="md-header__button md-logo" aria-label="Lambda-based Signature Verification" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -142,7 +142,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            Sigverify
+            Lambda-based Signature Verification
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -197,13 +197,13 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Sigverify" class="md-nav__button md-logo" aria-label="Sigverify" data-md-component="logo">
+    <a href="." title="Lambda-based Signature Verification" class="md-nav__button md-logo" aria-label="Lambda-based Signature Verification" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    Sigverify
+    Lambda-based Signature Verification
   </label>
   
     <div class="md-nav__source">
@@ -548,7 +548,7 @@ NAME                                   DESCRIPTION                      VERSION 
 com.amazonaws.signer.notation.plugin   AWS Signer plugin for Notation   1.0.298   [SIGNATURE_GENERATOR.ENVELOPE SIGNATURE_VERIFIER.TRUSTED_IDENTITY SIGNATURE_VERIFIER.REVOCATION_CHECK]   &lt;nil&gt; 
 </code></pre>
 <h3 id="signing-container-images">Signing container images</h3>
-<p>If you already have container images signed using AWS Signer then you can skip to the <a href="..#verifying-signatures-using-sigverify">verification section</a>. </p>
+<p>If you already have container images signed using AWS Signer then you can skip to the <a href="https://github.com/aws-samples/lambda-based-signature-verification#verifying-signatures-using-sigverify">verification section</a>. </p>
 <p>Start by setting some environment variables which will be used in both signing and creation of SigVerify Lambda function. For signing profile just give a descriptive name such as <code>ecr_signing_profile</code> and we will create the profile next. </p>
 <pre><code class="language-bash">export AWS_REGION=&lt;&gt;
 export AWS_ACCOUNT_ID=&lt;&gt;
@@ -619,7 +619,7 @@ python3 create-iam.py --role_name sigverify-lambda-role  --iam_policy_file lambd
 <pre><code class="language-bash">export SIGVERIFY_IAM_ROLE_ARN=&lt;role_arn&gt;
 </code></pre>
 <h3 id="create-notation-cli-lambda-layer">Create Notation CLI Lambda Layer</h3>
-<p>The Notation CLI used for verifying container image signatures will be deployed as a <a href="https://docs.aws.amazon.com/lambda/latest/dg/chapter-layers.html">Lambda layer</a>. We have included the <a href="../mac-create-lambda-layer.sh">mac-create-lambda-layer.sh</a> utility to help create this layer. There is also similar utility for Linux. The utility will pull the Notation CLI version, AWS Signer Plugin, and AWS Signer root certificate. The utility organizes these files in appropriate directories so that the Lambda function running in Linux OS can invoke them properly during verification. </p>
+<p>The Notation CLI used for verifying container image signatures will be deployed as a <a href="https://docs.aws.amazon.com/lambda/latest/dg/chapter-layers.html">Lambda layer</a>. We have included the <a href="https://github.com/aws-samples/lambda-based-signature-verification/blob/main/mac-create-lambda-layer.sh">mac-create-lambda-layer.sh</a> utility to help create this layer. There is also similar utility for <a href="https://github.com/aws-samples/lambda-based-signature-verification/blob/main/linux-create-lambda-layer.sh">Linux</a>. The utility will pull the Notation CLI version, AWS Signer Plugin, and AWS Signer root certificate. The utility organizes these files in appropriate directories so that the Lambda function running in Linux OS can invoke them properly during verification. </p>
 <pre><code># Assuming you are in the top repository sigverify folder
 source mac-create-lambda-layer.sh
 ls -l sigverify/
@@ -639,7 +639,6 @@ cp .example_samconfig.toml samconfig.toml
 sam build
 sam deploy
 </code></pre>
-<p>The SigVerify folder includes the notation CLI and related files in the <a href="../sigverify/notation-cli-layer.zip">sigverify/notation-cli-layer.zip</a> file. This zip file is added as a Lambda layer to the SigVerify Lambda function. If you want to create your own zip file you can use the <a href="../create-lambda-layer.sh">create-lambda-layer.sh</a> included in the repository from a <strong>Linux machine</strong>. Note while this getting started guide has instructions from a Mac, the SigVerify Lambda function will run in a Linux environment. Hence, the Notation CLI layer needs Linux packaging for SigVerify. </p>
 <h3 id="testing-the-sigverify-function">Testing the SigVerify function</h3>
 <p>You can create an ECS task with a signed and an unsigned image to test SigVerify in the AWS region and account that you have used thus far. Using <code>sam logs</code> command you will see the success/failure of signature verification.</p>
 <pre><code class="language-bash">2023/11/09/[$LATEST]49fac7c3885f477789f7c951f31f8989 2023-11-09T01:31:30.797000 INIT_START Runtime Version: python:3.10.v16 ...
@@ -653,7 +652,7 @@ Error: signature verification failed: no signature is associated with &quot;XXX.
 ...
 ...
 </code></pre>
-<p>You can modify the <a href="../sigverify/sigverify.py">sigverify.py</a> function to send alerts and/or to stop the ECS tasks that fail signature verification. </p>
+<p>You can modify the <a href="https://github.com/aws-samples/lambda-based-signature-verification/blob/main/sigverify/sigverify.py">sigverify.py</a> function to send alerts and/or to stop the ECS tasks that fail signature verification. </p>
 <h3 id="clean-up">Clean up</h3>
 <p>To delete the resources created along with the IAM role use the commands below.</p>
 <pre><code class="language-bash">sam delete
