@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sigverify
+
+  Sample SAM Template for sigverify
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 5
+
+Resources:
+  NotationCLILayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: notation-cli-layer
+      Description: Notation CLI Layer
+      ContentUri: sigverify/notation-cli-layer.zip
+      CompatibleRuntimes:
+        - python3.10
+
+  SigVerifyFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: sigverify
+      Handler: sigverify.lambda_handler
+      Runtime: python3.10
+      Role: <SIGVERIFY_IAM_ROLE_ARN>
+      MemorySize: 1024
+      Layers:
+        - !Ref NotationCLILayer
+      Environment:
+        Variables:
+          ACCOUNT: <AWS_ACCOUNT_ID>
+          REGION: <AWS_REGION>
+          SIGNING_PROFILE_NAME: <SIGNING_PROFILE_NAME>
+          XDG_CONFIG_HOME: /tmp/home/notation
+      Events:
+        ECSTaskCreateEvent:
+          Type: EventBridgeRule # More info about CloudWatchEvent Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#cloudwatchevent
+          Properties:
+            Pattern:
+              source:
+              - aws.ecs
+              detail-type:
+              - ECS Task State Change
+              detail:
+                desiredStatus:
+                - RUNNING
+                lastStatus:
+                - PROVISIONING
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  SigVerifyFunction:
+    Description: "Signature Verification Lambda Function ARN"
+    Value: !GetAtt SigVerifyFunction.Arn

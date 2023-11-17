@@ -1,0 +1,50 @@
+{   
+    "ECRAccess": {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ecr:GetAuthorizationToken"
+                ],
+                "Resource": "*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "ecr:GetDownloadUrlForLayer",
+                    "ecr:BatchGetImage"
+                ],
+                "Resource": "arn:aws:ecr:<AWS_REGION>:<AWS_ACCOUNT_ID>:repository/*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "signer:GetRevocationStatus"
+                ],
+                "Resource": "*"
+            }
+        ]  
+    },
+    "CloudWatchLogsAccess":
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": "logs:CreateLogGroup",
+                "Resource": "arn:aws:logs:*:<AWS_ACCOUNT_ID>:*"
+            },
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                ],
+                "Resource": [
+                    "arn:aws:logs:*:<AWS_ACCOUNT_ID>:log-group:/aws/lambda/*"
+                ]
+            }
+        ]
+    }
+}
