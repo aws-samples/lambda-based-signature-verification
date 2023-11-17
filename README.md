@@ -164,7 +164,7 @@ Error: signature verification failed: no signature is associated with "XXX.dkr.e
 ...
 ...
 ```
-You can modify the [sigverify.py](./sigverify/sigverify.py) function to send alerts and/or to stop the ECS tasks that fail signature verification. 
+You can modify the [sigverify.py](https://github.com/aws-samples/lambda-based-signature-verification/blob/main/sigverify/sigverify.py) function to send alerts and/or to stop the ECS tasks that fail signature verification. 
 
 ### Clean up
 To delete the resources created along with the IAM role use the commands below.
