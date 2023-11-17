@@ -1,4 +1,4 @@
-site_name: Sigverify
+site_name: Lambda-based Signature Verification
 docs_dir: 'docs/'
 copyright: 'Copyright &copy; Amazon 2023'
 site_author: 'AWS'
