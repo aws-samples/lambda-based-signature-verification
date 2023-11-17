@@ -32,7 +32,7 @@ com.amazonaws.signer.notation.plugin   AWS Signer plugin for Notation   1.0.298 
 ```
 
 ### Signing container images
-If you already have container images signed using AWS Signer then you can skip to the [verification section](#verifying-signatures-using-sigverify). 
+If you already have container images signed using AWS Signer then you can skip to the [verification section](https://github.com/aws-samples/lambda-based-signature-verification#verifying-signatures-using-sigverify). 
 
 Start by setting some environment variables which will be used in both signing and creation of SigVerify Lambda function. For signing profile just give a descriptive name such as `ecr_signing_profile` and we will create the profile next. 
 
@@ -85,6 +85,7 @@ Once signed, you can inspect the signature—including certificate chains and fi
 ```bash
 notation inspect $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/nginx-sig-test:stable-perl 
 ```
+
 ### Verifying signatures using SigVerify
 We will use SAM CLI to deploy the SigVerify Lambda function along with Eventbridge rule that triggers SigVerify whenever an ECS task is created. Make sure [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html#install-sam-cli-instructions) is installed.
 
@@ -123,7 +124,7 @@ The utility script will print the IAM role ARN. **Set the IAM role ARN to the be
 export SIGVERIFY_IAM_ROLE_ARN=<role_arn>
 ```
 ### Create Notation CLI Lambda Layer
-The Notation CLI used for verifying container image signatures will be deployed as a [Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/chapter-layers.html). We have included the [mac-create-lambda-layer.sh](./mac-create-lambda-layer.sh) utility to help create this layer. There is also similar utility for Linux. The utility will pull the Notation CLI version, AWS Signer Plugin, and AWS Signer root certificate. The utility organizes these files in appropriate directories so that the Lambda function running in Linux OS can invoke them properly during verification. 
+The Notation CLI used for verifying container image signatures will be deployed as a [Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/chapter-layers.html). We have included the [mac-create-lambda-layer.sh](https://github.com/aws-samples/lambda-based-signature-verification/blob/main/mac-create-lambda-layer.sh) utility to help create this layer. There is also similar utility for [Linux](https://github.com/aws-samples/lambda-based-signature-verification/blob/main/linux-create-lambda-layer.sh). The utility will pull the Notation CLI version, AWS Signer Plugin, and AWS Signer root certificate. The utility organizes these files in appropriate directories so that the Lambda function running in Linux OS can invoke them properly during verification. 
 ```
 # Assuming you are in the top repository sigverify folder
 source mac-create-lambda-layer.sh
@@ -146,8 +147,7 @@ You are all set to deploy the SigVerify Lambda function along with EventBridge r
 sam validate
 sam build
 sam deploy
-```
-The SigVerify folder includes the notation CLI and related files in the [sigverify/notation-cli-layer.zip](./sigverify/notation-cli-layer.zip) file. This zip file is added as a Lambda layer to the SigVerify Lambda function. If you want to create your own zip file you can use the [create-lambda-layer.sh](./create-lambda-layer.sh) included in the repository from a **Linux machine**. Note while this getting started guide has instructions from a Mac, the SigVerify Lambda function will run in a Linux environment. Hence, the Notation CLI layer needs Linux packaging for SigVerify. 
+``` 
 
 ### Testing the SigVerify function
 You can create an ECS task with a signed and an unsigned image to test SigVerify in the AWS region and account that you have used thus far. Using `sam logs` command you will see the success/failure of signature verification.
