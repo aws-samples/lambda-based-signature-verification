@@ -18,8 +18,8 @@ profile_name=os.environ["SIGNING_PROFILE_NAME"]
 # but they are readonly and we need to write the trust policy
 # so we need to move to /tmp which is the only writeable folder for Lambda
 notation_files_path=os.environ["XDG_CONFIG_HOME"]
-subprocess.run(f'mkdir -p {notation_files_path}', shell=True)
-subprocess.run(f'cp -R /opt/notation/ {notation_files_path}', shell=True)
+subprocess.run(['mkdir', '-p', notation_files_path])
+subprocess.run(['cp', '-R', '/opt/notation/', notation_files_path])
 
 
 # Notation normally requires a credentials store and crendentials store helper, but
@@ -28,7 +28,7 @@ def notation_verify_signature(ecr_client, container_image):
     auth_token=ecr_client.get_authorization_token()
     username, password = base64.b64decode(auth_token['authorizationData'][0]['authorizationToken']).decode('utf-8').split(":")
     # can add --verbose argument to notation verify if needed
-    result=subprocess.run(f'notation verify -u {username} -p {password} {container_image}', shell=True)
+    result=subprocess.run(['notation', 'verify', '-u', username, '-p', password, container_image])
     return result
 
 def configure_trust_policy():
@@ -60,7 +60,7 @@ def configure_trust_policy():
     trust_policy_file.write(json.dumps(trust_policy))
     trust_policy_file.close()
     # Import new trust policy. This step is required.
-    subprocess.run(f'notation policy import {temp_trust_policy}', shell=True)
+    subprocess.run(['notation', 'policy', 'import', temp_trust_policy])
  
 def lambda_handler(event, context):
 
